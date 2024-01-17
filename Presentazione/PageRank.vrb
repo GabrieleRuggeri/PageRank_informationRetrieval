@@ -1,0 +1,41 @@
+\frametitle{PageRank Implementation}
+
+\begin{lstlisting}[basicstyle=\tiny]
+	# initialize J/J_{S}
+    if S is not None:
+        # the number of pages specific to a certain topic
+        # can not be greater than the overall number of
+        # pages in the dataset
+        assert len(S) <= R.shape[0]
+        # if S is given than J must be None since it would be
+        # automatically deduced from S
+        assert J is None
+        J = np.array([1/len(S) if i in S else 0 for i in range(tmp)])
+    else:
+        if J is None:
+            # basic version of J with equal probabilities
+            J = np.ones(shape=(1,tmp)) * (1/tmp)
+
+    J = np.reshape(J, (1,tmp))
+    # initialize x_{t+1}
+    pi = x_0 + 1
+    # initialize 1
+    one_vector = np.ones(shape=(tmp,1))
+    # initialize the error vector
+    error = [np.linalg.norm( pi - x_0 )]
+    # iterative matrix
+    P = alpha * np.matmul(one_vector, J) + (1 - alpha) * R
+
+    it = 1
+    while np.linalg.norm( pi - x_0 ) >= eps:
+        # do computations
+        _ = np.matmul(x_0, P)
+        # update
+        x_0 = pi
+        pi = _
+        error.append(np.linalg.norm( pi - x_0))
+        it += 1
+
+    return pi.flatten(), error, it
+
+\end{lstlisting}
